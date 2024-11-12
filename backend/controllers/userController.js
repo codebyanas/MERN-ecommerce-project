@@ -4,8 +4,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
-// Create token
-const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const createToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+      expiresIn: '30d', // Set token to expire in 30 days (1 month)
+    });
+  };
+  
 
 // User login
 const loginUser = async (req, res) => {

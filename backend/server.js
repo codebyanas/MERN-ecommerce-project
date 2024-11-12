@@ -8,7 +8,7 @@ const productRouter = require('./routes/productRoute.js')
 
 // App config
 const app = express()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 5000
 
 //Middlewares
 app.use(express.json())

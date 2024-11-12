@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { backendUrl } from '../App';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function Login() {
+export default function Login({ setToken }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -17,12 +20,30 @@ export default function Login() {
         setShowPassword(!showPassword);
     };
 
-    const onSubmitHandler = (e) => {
-        e.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
-        setEmail('');
-        setPassword('');
+    const onSubmitHandler = async (e) => {
+        try {
+            e.preventDefault();
+            const response = await fetch(backendUrl + '/user/Admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setToken(data.token)
+            } else {
+                toast.error(data.message)
+            }
+            // setEmail('');
+            // setPassword('');
+
+        } catch (error) {
+            console.error(error);
+            toast.error('An error occurred while trying to login')
+        }
     };
 
     return (
