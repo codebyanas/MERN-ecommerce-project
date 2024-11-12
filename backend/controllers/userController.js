@@ -5,9 +5,7 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 const createToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-      expiresIn: '30d', // Set token to expire in 30 days (1 month)
-    });
+    return jwt.sign({ id }, process.env.JWT_SECRET);
   };
   
 
