@@ -776,9 +776,9 @@ export const products1 = [
 export const products = [
   {
     _id: 'aaaaa',
-    name: "Women's Casual Cotton Blouse",
+    name: "Neutral-Toned Tops",
     description:
-      "A versatile and comfortable women's top perfect for everyday wear. This lightweight cotton blouse features a flattering round neck and short sleeves, ideal for pairing with jeans or skirts.",
+      "A collection of neutral-colored women’s tops on hangers.",
     price: 100,
     image: [p_img1],
     category: 'Women',
@@ -932,9 +932,9 @@ export const products = [
   },
   {
     _id: 'aaaam',
-    name: "Women's Bohemian Floral Blouse",
+    name: "Soft Knitwear",
     description:
-      'A free-spirited and feminine top that embodies boho-chic style. This cotton blouse features a delicate floral print and relaxed fit, perfect for creating effortlessly stylish looks for both casual days and summer events.',
+      'Delicate knit sweaters and tops in light hues on a rack.',
     price: 130,
     image: [p_img13],
     category: 'Women',
@@ -1023,7 +1023,7 @@ export const products = [
   },
   {
     _id: 'aaaat',
-    name: "Women's Flowing Wide-Leg Palazzo Pants",
+    name: "Classic Jeans",
     description:
       'Chic and comfortable wide-leg trousers that offer effortless style. These palazzo pants feature a high waist with a removable belt, providing a flattering silhouette while the flowing fabric ensures all-day comfort and elegance.',
     price: 190,
@@ -1036,22 +1036,22 @@ export const products = [
   },
   {
     _id: 'aaaau',
-    name: "Women's Sleek Urban Jacket",
+    name: "Casual Outfit Set",
     description:
-      'A modern and versatile jacket perfect for city life. This zip-front jacket combines style with functionality, featuring a relaxed fit for layering and multiple pockets for practicality, making it ideal for busy days in the urban jungle.',
+      'Effortlessly stylish with our red pants and white top combo, perfect for a laid-back yet chic look.',
     price: 170,
     image: [p_img21],
     category: 'Women',
-    subCategory: 'Winterwear',
+    subCategory: 'Bottomwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716634345448,
     bestseller: false,
   },
   {
     _id: 'aaaav',
-    name: "Women's Elegant High-Waist Culottes",
+    name: "Stacked Jeans",
     description:
-      'Sophisticated and trendy culottes that offer a perfect blend of comfort and style. These high-waisted pants feature a wide-leg design and come with a stylish waist belt, suitable for both office wear and formal occasions.',
+      'Find your fit among our collection of premium-quality jeans, stacked and ready for every style preference.',
     price: 200,
     image: [p_img22],
     category: 'Women',
@@ -1101,13 +1101,13 @@ export const products = [
   },
   {
     _id: 'aaaaz',
-    name: "Women's Cozy Quilted Jacket",
+    name: "White Shirts",
     description:
-      'A warm and stylish jacket designed for chilly days. This zip-front quilted jacket offers a perfect balance of comfort and fashion, featuring a relaxed fit for easy layering and a cozy interior to keep you warm in cooler weather.',
+      'Classic and crisp, these white shirts are a wardrobe staple for a polished, clean look.',
     price: 220,
     image: [p_img26],
     category: 'Women',
-    subCategory: 'Winterwear',
+    subCategory: 'Topwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716639845448,
     bestseller: false,
@@ -1133,20 +1133,20 @@ export const products = [
     price: 230,
     image: [p_img28],
     category: 'Men',
-    subCategory: 'Winterwear',
+    subCategory: 'Bottomwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716642045448,
     bestseller: false,
   },
   {
     _id: 'aaabc',
-    name: "Women's Chic Peplum Top",
+    name: "Neutral Outerwear",
     description:
-      'An elegant and flattering top that accentuates the feminine silhouette. This cotton blend peplum top features a subtle flare at the waist, creating a sophisticated look perfect for both office wear and evening outings.',
+      'Layer up with our earthy-toned jackets and coats, versatile and perfect for any season.',
     price: 210,
     image: [p_img29],
     category: 'Women',
-    subCategory: 'Topwear',
+    subCategory: 'Winterwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716643145448,
     bestseller: false,
@@ -1205,9 +1205,9 @@ export const products = [
   },
   {
     _id: 'aaabh',
-    name: "Women's Boho Lace-Trim Top",
+    name: "Denim Detail",
     description:
-      'A romantic and ethereal top perfect for free-spirited fashion lovers. This cotton top features delicate lace trim details and a relaxed fit, ideal for creating bohemian-inspired looks for summer festivals or casual outings.',
+      'Sleek, high-quality dark jeans with subtle details, perfect for a dressed-up or casual look.',
     price: 260,
     image: [p_img34],
     category: 'Women',
@@ -1219,39 +1219,39 @@ export const products = [
 
   {
     _id: 'aaabi',
-    name: "Women's Waterproof Adventure Jacket",
+    name: "Black Shirts",
     description:
-      'A high-performance jacket designed for outdoor enthusiasts. This waterproof and breathable jacket features sealed seams and multiple pockets, making it perfect for hiking, camping, or any outdoor activity in unpredictable weather.',
+      'Sleek and versatile, these black shirts add an edgy touch to any outfit, suitable for day or night.',
     price: 240,
     image: [p_img35],
     category: 'Women',
-    subCategory: 'Winterwear',
+    subCategory: 'Topwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716649745448,
     bestseller: false,
   },
   {
     _id: 'aaabj',
-    name: "Women's Cozy Sherpa-Lined Jacket",
+    name: "Graphic Tees",
     description:
-      'A warm and stylish jacket perfect for cold winter days. This zip-front jacket features a soft sherpa lining for extra warmth and a relaxed fit for easy layering, combining comfort with urban chic design.',
+      'Express yourself with our trendy graphic tees, perfect for a casual and stylish vibe.',
     price: 270,
     image: [p_img36],
     category: 'Women',
-    subCategory: 'Winterwear',
+    subCategory: 'Topwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716650845448,
     bestseller: false,
   },
   {
     _id: 'aaabk',
-    name: "Women's Elegant Wrap Blouse",
+    name: "Safety Jackets",
     description:
-      'A sophisticated and versatile top that flatters any figure. This cotton blend wrap blouse features a v-neckline and adjustable waist tie, perfect for creating polished looks for the office or elegant evening ensembles.',
+      'Bright, functional safety jackets with reflective stripes, ideal for visibility and style in workwear.',
     price: 250,
     image: [p_img37],
     category: 'Women',
-    subCategory: 'Topwear',
+    subCategory: 'Winterwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716651945448,
     bestseller: false,
@@ -1336,9 +1336,9 @@ export const products = [
   },
   {
     _id: 'aaabr',
-    name: "Women's Lightweight Packable Puffer Jacket",
+    name: "Winter Coats",
     description:
-      'A practical and stylish jacket for the woman on the go. This lightweight puffer jacket easily packs into its own pocket for convenient storage, making it perfect for travel or unpredictable weather.',
+      'Stay warm and stylish in our colorful winter coats, designed for ultimate comfort in cold weather.',
     price: 310,
     image: [p_img44],
     category: 'Women',
@@ -1427,13 +1427,13 @@ export const products = [
   },
   {
     _id: 'aaaby',
-    name: "Women's Quilted Barn Jacket",
+    name: "Casual Tee",
     description:
-      'A classic and versatile jacket that combines style with practicality. This quilted barn jacket features a flattering fit and multiple pockets, perfect for countryside walks or running errands in cooler weather.',
+      'A wardrobe essential, this light blue T-shirt offers a simple, laid-back style for any day.',
     price: 320,
     image: [p_img51],
     category: 'Women',
-    subCategory: 'Winterwear',
+    subCategory: 'Topwear',
     sizes: ['S', 'M', 'L', 'XL'],
     date: 1716667345448,
     bestseller: false,
