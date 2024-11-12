@@ -14,15 +14,16 @@ export let backendUrl = import.meta.env.VITE_BACKEND_URL
 export let currency = "PKR. ";
 
 export default function App() {
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-      setToken(savedToken);
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token'); // clear token on logout
     }
-    localStorage.setItem('token', token);
-  }, [token]);
+  }, [token]);  
 
   // Logout function
   const handleLogout = () => {
