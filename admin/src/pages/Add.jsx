@@ -11,7 +11,7 @@ export default function Add({ token }) {
   const [category, setCategory] = useState("Men");
   const [subCategory, setSubCategory] = useState("Topwear");
   const [sizes, setSizes] = useState([]);
-  const [bestseller, setBestseller] = useState(false);
+  const [bestSeller, setBestSeller] = useState(false); // Updated to match backend
   const [isLoading, setIsLoading] = useState(false);
 
   const resetForm = () => {
@@ -21,7 +21,7 @@ export default function Add({ token }) {
     setCategory("Men");
     setSubCategory("Topwear");
     setSizes([]);
-    setBestseller(false);
+    setBestSeller(false); // Resets bestSeller to false
     setImages([null, null, null, null]);
   };
 
@@ -36,7 +36,7 @@ export default function Add({ token }) {
       formData.append("price", price);
       formData.append("category", category);
       formData.append("subCategory", subCategory);
-      formData.append("bestseller", bestseller);
+      formData.append("bestSeller", bestSeller.toString()); // Convert to string
       formData.append("sizes", JSON.stringify(sizes));
       images.forEach((image, index) => image && formData.append(`image${index + 1}`, image));
 
@@ -179,12 +179,12 @@ export default function Add({ token }) {
       <div className="flex gap-2 mt-2">
         <input
           type="checkbox"
-          id="bestseller"
-          checked={bestseller}
-          onChange={() => setBestseller(!bestseller)}
+          id="bestSeller"
+          checked={bestSeller}
+          onChange={() => setBestSeller((prev) => !prev)}
           className="accent-black"
         />
-        <label htmlFor="bestseller" className="cursor-pointer">
+        <label htmlFor="bestSeller" className="cursor-pointer">
           Add to Bestseller
         </label>
       </div>
