@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
 };
 
 // Admin login
-const generateToken = (email) => jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const generateToken = (email) => jwt.sign({ email }, process.env.JWT_SECRET );
 
 const adminLogin = (req, res) => {
     const { email, password } = req.body;
