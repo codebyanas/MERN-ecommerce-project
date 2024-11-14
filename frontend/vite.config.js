@@ -8,3 +8,5 @@ export default defineConfig({
     host: '0.0.0.0'
   },
 });
+
+console.log('🌐 Frontend is running on port 3000')

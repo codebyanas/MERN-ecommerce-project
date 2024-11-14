@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
-  const [currentState, setCurrentState] = useState('Sign Up');
+  const [currentState, setCurrentState] = useState('Login');
   const { navigate, backendUrl, token, setToken } = useContext(ShopContext);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
