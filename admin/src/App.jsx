@@ -16,25 +16,25 @@ export let currency = "$";
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
     } else {
-      localStorage.removeItem('token'); // clear token on logout
+      localStorage.removeItem('token'); // Clear token on logout
     }
-  }, [token]);  
+  }, [token]);
 
   // Logout function
   const handleLogout = () => {
     setToken('');
-    localStorage.removeItem('token');
   };
 
   return (
     <div className='bg-gray-50 min-h-screen'>
       <ToastContainer />
-      {token === '' ? <Login setToken={setToken} /> :
+      {token === '' ? (
+        <Login setToken={setToken} setUserId={setUserId} />
+      ) : (
         <>
           <Navbar handleLogout={handleLogout} />
           <hr />
@@ -49,7 +49,7 @@ export default function App() {
             </div>
           </div>
         </>
-      }
+      )}
     </div>
-  )
+  );
 }

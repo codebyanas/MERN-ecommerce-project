@@ -6,15 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login');
   const { navigate, backendUrl, token, setToken } = useContext(ShopContext);
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     const endpoint = currentState === 'Sign Up' ? '/user/register' : '/user/login';
-    const payload = currentState === 'Sign Up' ? { name, email, password } : { email, password };
+    const payload = currentState === 'Sign Up' 
+      ? { name: formData.name, email: formData.email, password: formData.password } 
+      : { email: formData.email, password: formData.password };
 
     try {
       const response = await fetch(`${backendUrl}${endpoint}`, {
@@ -26,9 +26,15 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         setToken(data.token);
-        // save token to local storage
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId); // Store userId in localStorage
         navigate('/');
+
+        const ut = localStorage.getItem('token')
+        console.log(ut)
+        
+        const uid = localStorage.getItem('userId')
+        console.log(uid)
       } else {
         const error = await response.json();
         toast.error(error.message || 'Authentication failed');
@@ -38,29 +44,21 @@ const Login = () => {
     }
   };
 
-  // if token is on local storage so the user is not go to login or signUp page
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      setToken(savedToken);
       navigate('/');
     }
-  }, [navigate]);
-
-  useState(() => {
-    if (!token && localStorage.getItem('token')) {
-      setToken(localStorage.getItem('token'))
-    }
-  }, [])
+  }, [navigate, setToken]);
 
   const toggleState = () => {
-    setCurrentState(currentState === 'Sign Up'? 'Login' : 'Sign Up');
+    setCurrentState((prevState) => (prevState === 'Sign Up' ? 'Login' : 'Sign Up'));
   };
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'name') setName(value);
-    if (name === 'email') setEmail(value);
-    if (name === 'password') setPassword(value);
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -78,7 +76,7 @@ const Login = () => {
           {currentState === 'Sign Up' && (
             <input
               onChange={onChange}
-              value={name}
+              value={formData.name}
               name="name"
               type="text"
               className="w-full px-3 py-2 border border-gray-800"
@@ -89,7 +87,7 @@ const Login = () => {
 
           <input
             onChange={onChange}
-            value={email}
+            value={formData.email}
             name="email"
             type="email"
             className="w-full px-3 py-2 border border-gray-800"
@@ -98,7 +96,7 @@ const Login = () => {
           />
           <input
             onChange={onChange}
-            value={password}
+            value={formData.password}
             name="password"
             type="password"
             className="w-full px-3 py-2 border border-gray-800"
@@ -108,10 +106,7 @@ const Login = () => {
 
           <div className="w-full flex justify-between text-sm mt-[-8px]">
             <p className="cursor-pointer">Forgot your password?</p>
-            <p
-              onClick={() => setCurrentState(currentState === 'Login' ? 'Sign Up' : 'Login')}
-              className="cursor-pointer"
-            >
+            <p onClick={toggleState} className="cursor-pointer">
               {currentState === 'Login' ? 'Create Account' : 'Login Here'}
             </p>
           </div>

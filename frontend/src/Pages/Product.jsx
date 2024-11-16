@@ -127,7 +127,7 @@ const Product = () => {
             Ane-commerce website is an online platform that facilitates the
             buying and selling of products or services over the internet. It
             serves as a vietual marketplace where businesses and individuals.com
-            showcase ther produch, interact with customers, and conduct
+            showcase ther product, interact with customers, and conduct
             fransactions without the need for a physical presence. E-commerce
             websites have goned immense popularity due to their convenience,
             accessibility, and the global reach they offer.

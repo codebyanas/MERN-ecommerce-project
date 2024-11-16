@@ -22,11 +22,19 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Incorrect password' });
         }
         const token = createToken(user._id);
-        res.json({ success: true, token });
+        
+        // Include userId in the response
+        res.json({ 
+            success: true, 
+            token, 
+            userId: user._id // Send userId back to the frontend
+        });
     } catch (error) {
+        console.error(error); // Log error for debugging
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
 
 // User registration
 const registerUser = async (req, res) => {
@@ -55,11 +63,19 @@ const registerUser = async (req, res) => {
         const user = await newUser.save();
 
         const token = createToken(user._id);
-        res.json({ success: true, token });
+
+        // Include userId in the response
+        res.json({ 
+            success: true, 
+            token, 
+            userId: user._id // Send userId back to the frontend
+        });
     } catch (error) {
+        console.error(error); // Log error for debugging
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
 
 // Admin login
 const generateToken = (email) => jwt.sign({ email }, process.env.JWT_SECRET );

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useState } from 'react';
-import { products as assetProducts } from '../assets/assets'; // Rename to avoid naming conflict
+import { products as assetProducts } from '../assets/assets';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-// 9:54:50
+import 'react-toastify/dist/ReactToastify.css';
 
 export const ShopContext = createContext();
 
@@ -16,28 +16,81 @@ const ShopContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
-  const [token, setToken] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [products, setProducts] = useState(assetProducts); // Initialize with asset products
 
   const addToCart = async (itemId, size) => {
-    if (!size) {
+    // Validate if size is correctly selected
+    if (!size || size.trim() === "") {
       toast.error('Please select a size');
       return;
     }
 
-    let cartData = structuredClone(cartItems);
-
-    if (cartData[itemId]) {
-      cartData[itemId][size]
-        ? (cartData[itemId][size] += 1)
-        : (cartData[itemId][size] = 1);
-    } else {
-      cartData[itemId] = {};
-      cartData[itemId][size] = 1;
+    if (token) {
+      try {
+        // Make a request to the backend addToCart endpoint
+        const response = await fetch(`${backendUrl}/cart/add`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Include token if required for auth
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem('userId'), // Assuming you store userId in localStorage
+            itemId,
+            size
+          })
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          // Update local cart data
+          let cartData = structuredClone(cartItems);
+          if (cartData[itemId]) {
+            cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
+          } else {
+            cartData[itemId] = { [size]: 1 };
+          }
+          setCartItems(cartData);
+          toast.success('Added to cart successfully!');
+        } else {
+          toast.error(data.message || 'Failed to add item to cart');
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        toast.error('An error occurred. Please try again.');
+      }
     }
-
-    setCartItems(cartData);
   };
+
+  const getUserCart = async () => {
+    if (token) {
+      try {
+        const response = await fetch(`${backendUrl}/cart/get`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem('userId'), // Assuming you store userId in localStorage
+          })
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          setCartItems(data.cartData);
+        } else {
+          setCartItems({});
+        }
+      } catch (error) {
+        console.error('Error fetching user cart:', error);
+        toast.error('An error occurred while fetching user cart. Please try again.');
+      }
+    }
+  }
 
   const addOrder = () => {
     let tempOrders = structuredClone(orders);
@@ -70,27 +123,72 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const updateQuantity = async (itemId, size, quantity) => {
-    let cartData = structuredClone(cartItems);
-    cartData[itemId][size] = quantity;
-    setCartItems(cartData);
+    try {
+      // Clone the cart items to avoid direct mutation
+      let cartData = structuredClone(cartItems);
+  
+      // Check if item and size exist before updating
+      if (!cartData[itemId]) {
+        cartData[itemId] = {};
+      }
+      cartData[itemId][size] = quantity;
+  
+      setCartItems(cartData); // Update the state
+  
+      if (token) {
+        const response = await fetch(`${backendUrl}/cart/update`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Include token if required for auth
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem('userId'), // Prefer parameter but fallback to localStorage
+            itemId,
+            size,
+            quantity,
+          }),
+        });
+  
+        // Check if the response was successful
+        if (!response.ok) {
+          const errorMessage = (await response.json()).message || 'Failed to update cart quantity';
+          toast.error(errorMessage);
+          return;
+        }
+  
+        const data = await response.json();
+        if (data.success) {
+          toast.success(`Updated cart successfully!`);
+        } else {
+          toast.error(data.message || 'Failed to update cart quantity');
+        }
+      }
+    } catch (error) {
+      console.error('Error updating cart:', error);
+      toast.error('An unexpected error occurred. Please try again.');
+    }
   };
+  
 
   const getCartAmount = () => {
+    if (products.length <= 0) {
+      return 0; // No products, no amount
+    }
+  
     let totalAmount = 0;
-    for (const item in cartItems) {
-      const productInfo = products.find((product) => product._id === item);
-      for (const size in cartItems[item]) {
-        try {
-          if (cartItems[item][size] > 0) {
-            totalAmount += productInfo.price * cartItems[item][size];
-          }
-        } catch (error) {
-          console.log('error', error);
+    for (const itemId in cartItems) {
+      const itemInfo = products.find((product) => product._id === itemId) || { price: 0 };
+      for (const size in cartItems[itemId]) {
+        const quantity = cartItems[itemId][size];
+        if (quantity > 0) {
+          totalAmount += itemInfo.price * quantity;
         }
       }
     }
     return totalAmount;
   };
+  
 
   const getProductsData = async () => {
     try {
@@ -135,6 +233,12 @@ const ShopContextProvider = ({ children }) => {
     }
     setFilterProducts(filteredProdCopy);
   };
+
+  useEffect(() => {
+    if (token && localStorage.getItem('token')) {
+      getUserCart(localStorage.getItem('token'));
+    }
+  }, []);
 
   const value = {
     products,

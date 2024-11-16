@@ -4,7 +4,8 @@ const cors = require('cors');
 const connectDB = require('./config/mongodb.js');
 const connectCloudinary = require('./config/cloudinary')
 const userRouter = require('./routes/userRoute')
-const productRouter = require('./routes/productRoute.js')
+const productRouter = require('./routes/productRoute.js');
+const cartRouter = require('./routes/cartRoute.js');
 
 // App config
 const app = express()
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/user', userRouter)
 app.use('/product', productRouter)
+app.use('/cart', cartRouter)
 
 app.listen(port, () => {
     console.log(`✔️  Server is running on port ${port}`)
