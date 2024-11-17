@@ -15,7 +15,7 @@ function List({ token }) {
       });
 
       const data = await response.json();
-      console.log("Fetched data:", data);
+      // console.log("Fetched data:", data);
 
       if (data.success) {
         // Update to access products array within the data object

@@ -30,11 +30,6 @@ const Login = () => {
         localStorage.setItem('userId', data.userId); // Store userId in localStorage
         navigate('/');
 
-        const ut = localStorage.getItem('token')
-        console.log(ut)
-        
-        const uid = localStorage.getItem('userId')
-        console.log(uid)
       } else {
         const error = await response.json();
         toast.error(error.message || 'Authentication failed');

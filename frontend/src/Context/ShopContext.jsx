@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useState } from 'react';
 import { products as assetProducts } from '../assets/assets';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const ShopContext = createContext();
@@ -194,7 +194,7 @@ const ShopContextProvider = ({ children }) => {
     try {
       const response = await fetch(`${backendUrl}/product/list`);
       const data = await response.json();
-      console.log('Fetched products:', data);
+      // console.log('Fetched products:', data);
 
       if (data.success && data.products.length > 0) {
         setProducts(data.products);

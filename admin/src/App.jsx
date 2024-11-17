@@ -33,7 +33,7 @@ export default function App() {
     <div className='bg-gray-50 min-h-screen'>
       <ToastContainer />
       {token === '' ? (
-        <Login setToken={setToken} setUserId={setUserId} />
+        <Login setToken={setToken} />
       ) : (
         <>
           <Navbar handleLogout={handleLogout} />
