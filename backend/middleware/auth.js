@@ -20,8 +20,14 @@ const authUser = async (req, res, next) => {
 
         // Check if error is specifically a JWT verification error
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-            return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+            return res.redirect('/login');
         }
+
+        // If jwt expires so redirect to / page and
+        if (error.name === 'TokenExpiredError' && error.message === 'jwt expired') {
+            localStorage.removeItem('token');
+            return res.redirect('/login');
+        }   
 
         res.status(500).json({ success: false, message: 'Internal server error' });
     }

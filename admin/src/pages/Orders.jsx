@@ -76,7 +76,6 @@ export default function Orders({ token }) {
     }
   };
   
-
   useEffect(() => {
       if (token) {
         fetchAllOrders();
@@ -122,9 +121,7 @@ export default function Orders({ token }) {
                       ", " +
                       order.address.state +
                       ", " +
-                      order.address.country +
-                      ", " +
-                      order.address.zipcode}
+                      order.address.country}
                   </p>
                 </div>
                 <p>{order.address.phone}</p>

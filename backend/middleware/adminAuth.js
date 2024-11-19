@@ -17,6 +17,12 @@ const adminAuth = async (req, res, next) => {
 
         next();
     } catch (error) {
+        // If jwt expires so redirect to / page and
+        if (error.name === 'TokenExpiredError' && error.message === 'jwt expired') {
+            localStorage.removeItem('token');
+            return res.redirect('/');
+        }               
+
         console.error('Token verification error:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }

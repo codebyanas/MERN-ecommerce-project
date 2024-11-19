@@ -207,6 +207,7 @@ const ShopContextProvider = ({ children }) => {
       toast.error('An error occurred while fetching products. Please try again.');
     }
   };
+  
 
   useEffect(() => {
     getProductsData();
@@ -259,7 +260,7 @@ const ShopContextProvider = ({ children }) => {
     navigate,
     backendUrl,
     token,
-    setToken,
+    setToken
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

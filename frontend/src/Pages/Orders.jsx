@@ -41,7 +41,7 @@ const Orders = () => {
         }));
         setOrderData(allOrdersItem.reverse());
       } else {
-        toast.error('Failed to fetch orders.');
+        console.error('User have no orders or Unable to fetch orders')
       }
     } catch (error) {
       toast.error('Error fetching orders: ' + error.message);

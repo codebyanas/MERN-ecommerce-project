@@ -1,232 +1,260 @@
-import { useContext, useState } from 'react';
-import { assets } from '../assets/assets';
-import CartTotal from '../Components/CartTotal';
-import Title from '../Components/Title';
-import { ShopContext } from '../Context/ShopContext';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useContext, useEffect, useState } from "react";
+import CartTotal from "../Components/CartTotal"; // Replace with your actual CartTotal path
+import Title from "../Components/Title"; // Replace with your Title component path
+import { assets } from "../assets/assets"; // Replace with your assets path
+import { ShopContext } from "../Context/ShopContext";
+import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products } = useContext(ShopContext);
+  const [method, setMethod] = useState("cod"); // Default payment method
+  const [isSubmitting, setIsSubmitting] = useState(false); // Prevent continuous requests
+  const {
+    backendUrl,
+    token,
+    cartItems,
+    setCartItems,
+    getCartAmount,
+    delivery_fee,
+    products,
+    navigate,
+  } = useContext(ShopContext);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    country: "",
+    phone: "",
   });
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
-    setFormData((data) => ({
-      ...data,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  const onSubmitHandler = async (e) => {
+  const placeOrder = async (orderData) => {
+    const endpoint = method === "cod" ? "/order/place" : "/order/stripe";
+    try {
+      const response = await fetch(`${backendUrl}${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+  
+      const data = await response.json();
+  
+      // Clear the cart after placing the order, regardless of the payment method
+      if (data.success) {
+        setCartItems({});
+        if (method === "cod") {
+          navigate("/orders");
+        } else if (method === "stripe" && data.session_url) {
+          window.location.replace(data.session_url); // Redirect to Stripe
+        }
+      } else {
+        toast.error(data.message || "Order placement failed.");
+      }
+    } catch (error) {
+      console.error("Order Error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false); // Enable the form again
+    }
+  };
+  
+
+  const onSubmitHandler = (e) => {
     e.preventDefault();
 
-    // Check if user is logged in
-
-    if (!localStorage.getItem('token') || !localStorage.getItem('userId')) {
-      toast.error('Please login to place an order.');
+    if (!token || !localStorage.getItem("userId")) {
+      toast.error("Please login to place an order.");
       return;
     }
 
-    try {
-      let orderItems = [];
-
-      // Process cart items
-      Object.entries(cartItems).forEach(([itemId, sizes]) => {
-        Object.entries(sizes).forEach(([size, quantity]) => {
-          if (quantity > 0) {
-            const itemInfo = structuredClone(products.find((product) => product._id === itemId));
-            if (itemInfo) {
-              orderItems.push({ ...itemInfo, size, quantity });
-            }
+    const orderItems = [];
+    Object.entries(cartItems).forEach(([itemId, sizes]) => {
+      Object.entries(sizes).forEach(([size, quantity]) => {
+        if (quantity > 0) {
+          const item = products.find((product) => product._id === itemId);
+          if (item) {
+            orderItems.push({ ...item, size, quantity });
           }
-        });
+        }
       });
+    });
 
-      // Submit order
-      const response = await fetch(`${backendUrl}/order/place`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem('userId'),
-          address: formData,
-          items: orderItems,
-          amount: getCartAmount() + delivery_fee,
-          paymentMethod,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setCartItems({});
-        navigate('/orders');
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('An error occurred. Please try again.');
+    if (!orderItems.length) {
+      toast.error("Your cart is empty.");
+      return;
     }
+
+    const orderData = {
+      userId: localStorage.getItem("userId"),
+      address: formData,
+      items: orderItems,
+      amount: getCartAmount() + delivery_fee,
+      paymentMethod: method,
+      origin: window.location.origin,
+    };
+
+    setIsSubmitting(true); // Prevent further submissions
+    placeOrder(orderData);
   };
+
+  useEffect(() => {
+    if (isSubmitting) {
+      toast.info("Processing your order...");
+    }
+  }, [isSubmitting]);
 
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t"
-    >
-      {/* Delivery Information */}
+      className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min:h[80vh] border-t">
+      {/* Left-Side */}
       <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
         <div className="text-xl sm:text-2xl my-3">
-          <Title text1="DELIVERY" text2="INFORMATION" />
+          <Title text1={"DELIVERY"} text2={"INFORMATION"} />
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex gap-3">
           <input
             onChange={onChangeHandler}
             name="firstName"
             value={formData.firstName}
-            required
             type="text"
             placeholder="First Name"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
           <input
             onChange={onChangeHandler}
             name="lastName"
             value={formData.lastName}
-            required
             type="text"
             placeholder="Last Name"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
         </div>
         <input
           onChange={onChangeHandler}
           name="email"
           value={formData.email}
-          required
           type="email"
-          placeholder="Email Address"
+          placeholder="Email"
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+          required
         />
         <input
           onChange={onChangeHandler}
-          value={formData.street}
           name="street"
-          required
+          value={formData.street}
           type="text"
           placeholder="Street"
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+          required
         />
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex gap-3">
           <input
             onChange={onChangeHandler}
-            value={formData.city}
             name="city"
-            required
+            value={formData.city}
             type="text"
             placeholder="City"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
           <input
             onChange={onChangeHandler}
-            value={formData.state}
             name="state"
-            required
+            value={formData.state}
             type="text"
             placeholder="State"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex gap-3">
           <input
             onChange={onChangeHandler}
-            value={formData.zipCode}
-            name="zipCode"
-            required
-            type="text"
+            name="zipcode"
+            value={formData.zipcode}
+            type="number"
             placeholder="Zipcode"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
           <input
             onChange={onChangeHandler}
-            value={formData.country}
             name="country"
-            required
+            value={formData.country}
             type="text"
             placeholder="Country"
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            required
           />
         </div>
         <input
           onChange={onChangeHandler}
-          value={formData.phone}
           name="phone"
-          required
+          value={formData.phone}
           type="number"
           placeholder="Phone"
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+          required
         />
       </div>
 
-      {/* Payment Information */}
+      {/* Right-Side */}
       <div className="mt-8">
-        <CartTotal />
+        <div className="mt-8 min-w-80">
+          <CartTotal />
+        </div>
+
         <div className="mt-12">
-          <Title text1="PAYMENT" text2="METHOD" />
-          <div className="flex flex-col lg:flex-row gap-4">
+          <Title text1={"PAYMENT"} text2={"METHOD"} />
+
+          {/* Payment Method */}
+          <div className="flex gap-3 flex-col lg:flex-row">
             <div
-              onClick={() => setPaymentMethod('stripe')}
-              className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
-            >
+              onClick={() => setMethod("stripe")}
+              className="flex items-center gap-3 border p-2 px-3 cursor-pointer">
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  paymentMethod === 'stripe' ? 'bg-green-400' : ''
-                }`}
-              ></p>
-              <img className="h5 mx-4" src={assets.stripe_logo} alt="Stripe" />
+                  method === "stripe" ? "bg-green-400" : ""
+                }`}></p>
+              <img className="h-5 mx-4" src={assets.stripe_logo} alt="Stripe" /> 
+              {/* Stripe button */}
             </div>
+
             <div
-              onClick={() => setPaymentMethod('razorpay')}
-              className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
-            >
+              onClick={() => setMethod("cod")}
+              className="flex items-center gap-3 border p-2 px-3 cursor-pointer">
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  paymentMethod === 'razorpay' ? 'bg-green-400' : ''
-                }`}
-              ></p>
-              <img className="h5 mx-4" src={assets.razorpay_logo} alt="Razorpay" />
-            </div>
-            <div
-              onClick={() => setPaymentMethod('cod')}
-              className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
-            >
-              <p
-                className={`min-w-3.5 h-3.5 border rounded-full ${
-                  paymentMethod === 'cod' ? 'bg-green-400' : ''
-                }`}
-              ></p>
-              <p className="text-gray-500 text-sm font-medium mx-4">CASH ON DELIVERY</p>
+                  method === "cod" ? "bg-green-400" : ""
+                }`}></p>
+              <p className="text-gray-500 text-sm font-medium mx-4">
+                CASH ON DELIVERY
+              </p>
             </div>
           </div>
           <div className="w-full text-end mt-8">
-            <button type="submit" className="bg-black text-white px-16 py-3 text-sm">
-              PLACE ORDER
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-black text-white px-16 py-3 text-sm">
+              {isSubmitting ? "Processing..." : "PLACE ORDER"}
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 const express = require('express');
-const { placeOrder, placeOrderStripe, allOrders, userOrders, updateStatus } = require('../controllers/orderController')
+const { placeOrder, placeOrderStripe, allOrders, userOrders, updateStatus, verifyStripe } = require('../controllers/orderController')
 const authUser = require('../middleware/auth')
 const adminAuth = require('../middleware/adminAuth');
 
@@ -12,6 +12,9 @@ orderRouter.post('/status', adminAuth, updateStatus);
 // Payment features
 orderRouter.post('/place', authUser ,placeOrder);
 orderRouter.post('/stripe', authUser ,placeOrderStripe);
+
+// Verify stripe
+orderRouter.post('/verifyStripe', authUser, verifyStripe)
 
 // User feature //
 orderRouter.post('/userOrders', authUser, userOrders);
